@@ -54,6 +54,8 @@ public class MovementInput : MonoBehaviour {
 	private Text flagCounter;
 
 	private int flagAmount;
+	public GameObject gate;
+	public GameObject attack;
 
 	// Use this for initialization
 	void Start () {
@@ -69,6 +71,10 @@ public class MovementInput : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		InputMagnitude ();
+
+		if (Input.GetKeyDown(KeyCode.Mouse0)) {
+			StartCoroutine(waiter());
+		}
 
 		 ySpeed += Physics.gravity.y * Time.deltaTime;
 
@@ -89,13 +95,18 @@ public class MovementInput : MonoBehaviour {
             controller.stepOffset = originalStepOffset;
             ySpeed = -0.5f;
 
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 ySpeed = jumpSpeed;
             }
         }
 
-		flagCounter.text = "Flags: " + flagAmount;
+		if (flagAmount < 10) {
+		flagCounter.text = "Flags: " + flagAmount + "/10";
+		} else {
+			flagCounter.text = "You've collected all the flags! The gate to the ice castle has opened!";
+			Destroy(gate);
+		}
 
 		if (Input.GetKeyDown(KeyCode.LeftShift) && runToggle == false) {
 			Velocity = 30;
@@ -176,4 +187,15 @@ public class MovementInput : MonoBehaviour {
 			Destroy(collision.gameObject);
 		}
 	}
+
+	private void DestoryGate(GameObject gate) {
+		Destroy(gate);
+	}
+
+	IEnumerator waiter()
+{
+    attack.SetActive(true);
+    yield return new WaitForSeconds(1);
+	attack.SetActive(false);
+}
 }
